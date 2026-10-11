@@ -5,6 +5,8 @@ WIDTH, HEIGHT = 800, 600
 GROUND_Y = HEIGHT - 40
 INTERCEPTOR_SPEED, EXPLOSION_MAX, EXPLOSION_TIME = 420, 45, 1.2
 AMMO_PER_BATTERY = 10
+SHAKE_DURATION = 0.6
+shake_time = 0.0
 
 
 def explosion_color(progress):
@@ -18,8 +20,9 @@ def explosion_color(progress):
 
 
 def on_city_destroyed(city):
-    """Called when a city is hit; add screen shake, sounds, or a game-over warning here."""
-    pass
+    """Called when a city is hit; start a screen shake."""
+    global shake_time
+    shake_time = SHAKE_DURATION
 
 
 def city_repair_threshold():
@@ -205,6 +208,7 @@ class Game:
 
 
 def main():
+    global shake_time
     pygame.init()
     screen = pygame.display.set_mode((WIDTH, HEIGHT))
     pygame.display.set_caption("Missile Command")
@@ -222,6 +226,12 @@ def main():
                 game.reset()
         game.update(dt)
         game.draw(screen)
+        if shake_time > 0:
+            shake_time = max(0.0, shake_time - dt)
+            magnitude = int(12 * shake_time / SHAKE_DURATION)
+            frame = screen.copy()
+            screen.fill((5, 5, 25))
+            screen.blit(frame, (random.randint(-magnitude, magnitude), random.randint(-magnitude, magnitude)))
         pygame.display.flip()
     pygame.quit()
 
