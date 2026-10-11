@@ -9,7 +9,12 @@ AMMO_PER_BATTERY = 10
 
 def explosion_color(progress):
     """Return an (r, g, b) colour for an explosion (progress 0..1 of its life), or None for the default."""
-    pass
+    p = max(0.0, min(1.0, progress))
+    if p < 0.5:
+        t = p / 0.5  # 0 -> 1 over the first half: orange -> white-hot
+        return (255, int(140 + 115 * t), int(255 * t))
+    t = (p - 0.5) / 0.5  # 0 -> 1 over the second half: white-hot -> red
+    return (255, int(255 * (1 - t)), int(255 * (1 - t)))
 
 
 def on_city_destroyed(city):
